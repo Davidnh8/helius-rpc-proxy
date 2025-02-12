@@ -1,7 +1,8 @@
-name = "rpc-proxy"
+name = "rpc-proxy-dev"
 main = "./src/index.ts"
 compatibility_date = "2022-05-03"
 vars = { ENVIRONMENT = 'dev'}
 
 [env.production]
+name="rpc-proxy"
 vars = { ENVIRONMENT = 'production'}
