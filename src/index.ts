@@ -1,10 +1,24 @@
 interface Env {
 	CORS_ALLOW_ORIGIN: string;
 	HELIUS_API_KEY: string;
+    ENVIRONMENT: string;
 }
 
 export default {
 	async fetch(request: Request, env: Env) {
+        const isProd = env.ENVIRONMENT === 'production';
+
+		// Define RPC Base
+		const MAINNET_RPC_BASE = "mainnet";
+		const DEVNET_RPC_BASE = "devnet";
+
+		const RPC_BASE = isProd ? MAINNET_RPC_BASE : DEVNET_RPC_BASE;
+
+        // Define API BASE
+        const MAINNET_API_BASE = 'api';
+        const DEVNET_API_BASE = 'api-devnet';
+
+        const API_BASE = isProd ? MAINNET_API_BASE : DEVNET_API_BASE;    
 
 		// If the request is an OPTIONS request, return a 200 response with permissive CORS headers
 		// This is required for the Helius RPC Proxy to work from the browser and arbitrary origins
@@ -37,13 +51,13 @@ export default {
 		const upgradeHeader = request.headers.get('Upgrade')
 
 		if (upgradeHeader || upgradeHeader === 'websocket') {
-			return await fetch(`https://mainnet.helius-rpc.com/?api-key=${env.HELIUS_API_KEY}`, request)
+			return await fetch(`https://${RPC_BASE}.helius-rpc.com/?api-key=${env.HELIUS_API_KEY}`, request)
 		}
 
 
 		const { pathname, search } = new URL(request.url)
 		const payload = await request.text();
-		const proxyRequest = new Request(`https://${pathname === '/' ? 'mainnet.helius-rpc.com' : 'api.helius.xyz'}${pathname}?api-key=${env.HELIUS_API_KEY}${search ? `&${search.slice(1)}` : ''}`, {
+		const proxyRequest = new Request(`https://${pathname === '/' ? `${RPC_BASE}.helius-rpc.com` : `${API_BASE}.helius.xyz`}${pathname}?api-key=${env.HELIUS_API_KEY}${search ? `&${search.slice(1)}` : ''}`, {
 			method: request.method,
 			body: payload || null,
 			headers: {
