@@ -9,4 +9,4 @@ vars = { ENVIRONMENT = 'dev'}
 name="rpc-proxy"
 vars = { ENVIRONMENT = 'production'}
 zone_id = "a2734f38c3626f4cd99650383cec527a"
-route = "rpc-proxy.solanaforgelabs.com/*"
+route = "rpc-proxy.solanaforgelabs.com"
